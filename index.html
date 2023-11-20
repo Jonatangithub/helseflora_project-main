@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Helseflora - Kategorier</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <div class="header">
+        <h1 href="index.html">Helseflora - Kategorier</h1>
+        <a href="cart.html">View Cart</a>
+        <!-- Search bar container -->
+        <h2>Plant Search</h2>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button onclick="search()">Search</button>
+        </div>
+        <ul id="categoryList"></ul>
+    </div>
+
+    <script>
+        // Search the plants.
+        function search() {
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            // Construct the URL with the search term as a query parameter
+            var searchUrl = 'plant.html?search=' + encodeURIComponent(searchTerm);
+
+            // Navigate to the search page
+            window.location.href = searchUrl;
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryList = document.getElementById('categoryList');
+
+            // Henter kategoriene for å liste de opp
+            function displayCategoryList() {
+                fetch('https://helseflora.herokuapp.com/webshop/categories?key=BQPHVM69')
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(category => {
+                            console.log(category.name)
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `<a href="plant.html">${category.name}</a>`;
+                            categoryList.appendChild(listItem);
+                            listItem.addEventListener("click", function (event) {
+                                localStorage.setItem("category", category.id)
+                                localStorage.setItem("category&search", "category")
+                            })
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching categories:', error);
+                    });
+            }
+
+            // Kall på funksjonen
+            displayCategoryList();
+        });
+    </script>
+</body>
+
+</html>

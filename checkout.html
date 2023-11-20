@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Helseflora - Checkout</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <h1>Helseflora - Checkout</h1>
+    <a href="index.html">Return to index</a>
+
+    <!-- Display the selected items for checkout -->
+    <h2>Selected Items</h2>
+    <ul id="checkoutList"></ul>
+    <p><strong>Total Sum:</strong> <span id="checkoutTotalSum">0.00</span> NOK</p>
+
+    <!-- Checkout form -->
+    <h2>Shipping Information</h2>
+    <!-- Include necessary form fields such as name, address, etc. -->
+    <form id="checkoutForm">
+        <!-- Add your form fields here -->
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" required>
+        <p></p>
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required>
+        <p></p>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+        <P></P>
+        <label for="postalCode">Postal Code:</label>
+        <input type="text" id="postalCode" name="postalCode" required>
+        <P></P>
+        <label for="streetAddress">Street Address:</label>
+        <input type="text" id="streetAddress" name="streetAddress" required>
+        <P></P>
+        <!-- Add a submit button to complete the checkout -->
+        <button type="submit" onclick="completeCheckout()">Complete Checkout</button>
+
+    </form>
+
+    <div id="notification-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkoutList = document.getElementById('checkoutList');
+            const checkoutTotalSumElement = document.getElementById('checkoutTotalSum');
+            const notificationContainer = document.getElementById('notification-container');
+            const checkoutForm = document.getElementById('checkoutForm');
+
+            // Retrieve the cart from local storage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Display the selected items for checkout
+            cart.forEach(item => {
+                // Fetch plant details based on the item id
+                fetch(`https://helseflora.herokuapp.com/webshop/plants/?id=${item.id}&key=BQPHVM69`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const plant = data[0];
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <div>
+                                <h3>${plant.name}</h3>
+                                <p><strong>Price:</strong> ${plant.price} NOK</p>
+                                <p><strong>Quantity:</strong> ${item.quantity}</p>
+                                <p><strong>Total:</strong> ${item.quantity * plant.price.toFixed(2)} NOK</p>
+                            </div>
+                        `;
+                        checkoutList.appendChild(listItem);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching plant details:', error);
+                    });
+            });
+
+            // Display the total sum for checkout
+            updateCheckoutTotalSum();
+
+            // Function to update the total sum for checkout
+            function updateCheckoutTotalSum() {
+                const checkoutTotalSum = cart.reduce((sum, item) => {
+                    return sum + item.quantity * item.price;
+                }, 0).toFixed(2);
+                checkoutTotalSumElement.textContent = checkoutTotalSum;
+            }
+
+            // Function to complete the checkout
+            window.completeCheckout = function () {
+                // Here, you can implement the logic to process the checkout,
+                // send the order to a server, and handle the payment process.
+
+
+                // Display notification
+                displayNotification('Checkout completed successfully!');
+
+                // Optionally, clear the cart and update the UI
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCheckoutTotalSum();
+
+                // You can redirect to a confirmation page or any other desired action
+                // window.location.href = 'confirmation.html';
+            };
+
+            // Function to display a notification
+            function displayNotification(message) {
+                // Create a notification element
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+
+                // Append the notification to the container
+                notificationContainer.appendChild(notification);
+
+                // Remove the notification after a certain duration (e.g., 3 seconds)
+                setTimeout(() => {
+                    notificationContainer.removeChild(notification);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+
+</html>

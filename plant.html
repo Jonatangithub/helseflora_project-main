@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Helseflora - Plants</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <h1>Helseflora - Plants</h1>
+    <a href="cart.html">View Cart</a>
+    <a href="index.html">Return to index</a>
+    <h2 id="categoryTitle"></h2>
+    <ul id="plantList"></ul>
+
+    <div id="notification-container"></div>
+
+    <script>
+        function addToCart(event, plantId) {
+            event.preventDefault();
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const existingPlant = cart.find(item => item.id === plantId);
+
+            if (existingPlant) {
+                existingPlant.quantity++;
+            } else {
+                cart.push({ id: plantId, quantity: 1 });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Create a notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = 'Plant added to the cart!';
+
+            // Append the notification to the container
+            document.getElementById('notification-container').appendChild(notification);
+
+            // Remove the notification after a certain duration (e.g., 3 seconds)
+            setTimeout(() => {
+                document.getElementById('notification-container').removeChild(notification);
+            }, 3000);
+        }
+
+        function setPlantId(id) {
+            localStorage.setItem('plantId', id);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const plantList = document.getElementById('plantList');
+            const categoryTitle = document.getElementById('categoryTitle');
+
+            const searchTerm = new URLSearchParams(window.location.search).get('search');
+
+            if (searchTerm) {
+                fetch(`https://helseflora.herokuapp.com/webshop/plants?search=${encodeURIComponent(searchTerm)}&key=BQPHVM69`)
+                    .then(response => response.json())
+                    .then(data => {
+                        categoryTitle.textContent = `Search Results for: ${searchTerm}`;
+                        data.forEach(plant => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `
+                                <a href="plant_detail.html" onclick="setPlantId(${plant.id})">
+                                    <h3>${plant.name}</h3>
+                                    <p><strong>Description:</strong> ${plant.description}</p>
+                                    <p><strong>Price:</strong> ${plant.price} NOK</p>
+                                    <img src="${plant.thumb}" alt="${plant.name}">
+                                    <button onclick="addToCart(event, ${plant.id})">Add to Cart</button>
+                                </a>
+                            `;
+                            plantList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching plants:', error);
+                    });
+            } else {
+                const categoryId = localStorage.getItem("category");
+                fetch(`https://helseflora.herokuapp.com/webshop/plants?category=${categoryId}&key=BQPHVM69`)
+                    .then(response => response.json())
+                    .then(data => {
+                        categoryTitle.textContent = `Category: ${data[0].category_name}`;
+                        data.forEach(plant => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `
+                                <a href="plant_detail.html" onclick="setPlantId(${plant.id})">
+                                    <h3>${plant.name}</h3>
+                                    <p><strong>Description:</strong> ${plant.description}</p>
+                                    <p><strong>Price:</strong> ${plant.price} NOK</p>
+                                    <img src="${plant.thumb}" alt="${plant.name}">
+                                    <button onclick="addToCart(event, ${plant.id})">Add to Cart</button>
+                                </a>
+                            `;
+                            plantList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching plants:', error);
+                    });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

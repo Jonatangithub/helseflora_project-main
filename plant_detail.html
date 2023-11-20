@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Detail View</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <h1>Plant Detail View</h1>
+    <a href="cart.html">View Cart</a>
+    <a href="index.html">Return to index</a>
+    <div class="plant-detail" id="plantDetail">
+        <!-- Content will be dynamically populated here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const plantId = localStorage.getItem('plantId');
+
+            fetch(`https://helseflora.herokuapp.com/webshop/plants?id=${plantId}&key=BQPHVM69`)
+                .then(response => response.json())
+                .then(data => {
+                    const plant = data[0];
+
+                    const plantDetail = document.getElementById('plantDetail');
+                    plantDetail.innerHTML = `
+                        <img src="${plant.image}" alt="${plant.name}" id="plantImage" class="large-image">
+                        <h2>${plant.name}</h2>
+                        <p><strong>Category:</strong> ${plant.category_name}</p>
+                        <p><strong>Description:</strong> ${plant.description}</p>
+                        <p><strong>Height:</strong> ${plant.height}</p>
+                        <p><strong>Growth Zone:</strong> ${plant.zone_id}</p>
+                        <p><strong>Fertilizer Mix:</strong> ${plant.nitrogen}-${plant.phosphor}-${plant.potassium}</p>
+                        <p><strong>Planting Advice:</strong> ${plant.min_temp_day}°C (Day) / ${plant.min_temp_night}°C (Night)</p>
+                        <p><strong>Price:</strong> ${plant.price} NOK</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error fetching plant details:', error);
+                });
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+
+</html>

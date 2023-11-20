@@ -1,0 +1,117 @@
+/* HELE CSS ER BRUKT AI TOOLS TIL Å LAGE */
+
+
+/* Reset some default styles */
+body,
+h1,
+h2,
+p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Set a background color and font family similar to Discord */
+body {
+    background-color: #36393f;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* Style the header with a Discord-like color and padding */
+h1 {
+    background-color: #7289da;
+    color: #fff;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.large-image {
+    width: 400px;
+    /* Adjust the width to your preferred size */
+    height: auto;
+    /* Auto height to maintain aspect ratio */
+    display: block;
+    /* Ensure it's treated as a block element */
+    margin: 0 auto;
+    /* Center the image horizontally */
+}
+
+/* Style for the <h2> element in plant-detail */
+h2, h3 {
+    font-size: 24px;
+    /* Adjust the font size to your preference */
+    margin-top: 10px;
+    /* Add margin to the top for spacing */
+    color: #7289da;
+    /* Adjust the text color */
+    /* Add any other styles you want */
+}
+
+/* Style links to look like Discord links */
+a {
+    color: #7289da;
+    text-decoration: none;
+}/* Style links to look like Discord links */
+p {
+    color: #7289da;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Emulate Discord's card-like appearance for plant details */
+.plant-detail {
+    background-color: #2f3136;
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    margin: 20px auto;
+    text-align: center;
+    overflow: hidden;
+    /* Add overflow for plant details */
+}
+.notification {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+/* Style the back button to match Discord */
+.back-button {
+    background-color: #7289da;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.back-button:hover {
+    background-color: #677bc4;
+}
+
+/* Make the plant list scrollable */
+#plantList {
+    max-height: 70vh;
+    /* Set a maximum height as a percentage of viewport height */
+    overflow-y: auto;
+    /* Add vertical scrollbar when needed */
+}

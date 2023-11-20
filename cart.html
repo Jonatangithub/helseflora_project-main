@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Helseflora - Cart</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+</head>
+
+<body>
+    <h1>Helseflora - Cart</h1>
+    <a href="index.html">Return to index</a>
+    <ul id="cartList"></ul>
+    <p><strong>Total Sum:</strong> <span id="totalSum">0.00</span> NOK</p>
+
+    <div id="notification-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartList = document.getElementById('cartList');
+            const totalSumElement = document.getElementById('totalSum');
+            const notificationContainer = document.getElementById('notification-container');
+
+            // Retrieve the cart from local storage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Display the items in the cart
+            cart.forEach(item => {
+                // Fetch plant details based on the item id
+                fetch(`https://helseflora.herokuapp.com/webshop/plants/?id=${item.id}&key=BQPHVM69`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const plant = data[0];
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <div>
+                                <h3>${plant.name}</h3>
+                                <p><strong>Description:</strong> ${plant.description}</p>
+                                <p><strong>Price:</strong> ${plant.price} NOK</p>
+                                <img src="${plant.thumb}" alt="${plant.name}">
+                                <p><strong>Quantity:</strong>
+                                    <input type="number" value="${item.quantity}" min="1" id="quantity_${item.id}" oninput="updateQuantity(${item.id}, this.value)">
+                                </p>
+                                <p><strong>Total:</strong> <span id="total_${item.id}">${(plant.price * item.quantity).toFixed(2)}</span> NOK</p>
+                                <button onclick="removeItem(${item.id})">Remove</button>
+                            </div>
+                        `;
+                        cartList.appendChild(listItem);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching plant details:', error);
+                    });
+            });
+
+            // Update quantity and total price in the cart array and local storage
+            window.updateQuantity = function (itemId, newQuantity) {
+                // ... (your existing code)
+            };
+
+            // Remove item from the cart array and local storage
+            window.removeItem = function (itemId) {
+                // ... (your existing code)
+            };
+
+            // Remove all items from the cart array and local storage
+            window.removeAllItems = function () {
+                // ... (your existing code)
+            };
+
+            // Function to update the total sum
+            function updateTotalSum() {
+                // ... (your existing code)
+            }
+
+            // Function to display a notification
+            function displayNotification(message) {
+                // ... (your existing code)
+            }
+
+            // Checkout button
+            const checkoutButton = document.createElement('button');
+            checkoutButton.textContent = 'Proceed to Checkout';
+            checkoutButton.onclick = function () {
+                window.location.href = 'checkout.html'; // Redirect to the checkout page
+            };
+            document.body.appendChild(checkoutButton);
+        });
+    </script>
+
+    <button onclick="removeAllItems()">Remove All</button>
+
+</body>
+
+</html>

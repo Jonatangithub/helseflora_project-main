@@ -1,0 +1,252 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Details</title>
+    <style> 
+        body {
+            background-color: #333; /* Dark background color */
+            color: white; /* White text color */
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column; /* Arrange elements in a column */
+            align-items: flex-start; /* Align text to the left */
+            justify-content: flex-start; /* Align elements to the top */
+            height: 100vh; /* Use full viewport height */
+            margin: 0; /* Remove default margin */
+        }
+
+        h1 {
+            color: #478865;
+            font-family: 'Times New Roman', Times, serif;
+            margin-left: 5px;
+            margin-top: 5px; /* Adjusted margin-top to move it down */
+        }
+
+        h4 {
+            color: #379E3A;
+            font-family: 'Times New Roman', Times, serif;
+            border-bottom: 1px solid #478865;
+            padding-bottom: 10px;
+            margin-top: 100px; /* Adjusted margin-top to move it down */
+            margin-left: 5px;
+            width: 100%;
+        }
+
+        .plant-details {
+            background-color: #535353;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: left; /* Align text to the left */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            cursor: pointer; /* Add a pointer cursor to the images */
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .fertilizer-label {
+            font-size: 18px;
+        }
+
+        .hidden-value {
+            display: none; /* Hide the elements with this class */
+        }
+
+        .back-button {
+            background-color: #478865;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Remove default underline */
+            color: white; /* Set text color to white */
+            font-size: 20px; /* Adjust font size */
+            padding: 10px;
+            margin: 10px 0 20px 10px; /* Adjusted margin for positioning */
+            position: absolute;
+            margin-bottom: 100px;
+        }
+
+        .back-button::before {
+            content: "←"; /* Unicode arrow symbol (left arrow) */
+            margin-right: 5px; /* Add space between the arrow and the button */
+        }
+    </style>
+</head>
+<body>
+    <a class="back-button" href="http://127.0.0.1:5500/PlantListView.html"></a>
+    <h4>Helseflora</h4>
+    <h1>
+        <div class="name-background">
+            <span id="plant-name">Plant Name</span>
+        </div>
+    </h1>
+
+    <script>
+        // Retrieve plant ID from localStorage
+        const selectedPlantId = localStorage.getItem('selectedPlantId');
+
+        // Function to fetch plant details based on the selected plant ID
+        async function fetchPlantDetails(plantId) {
+            let key = "BQPHVM69";
+            const url = "https://helseflora.herokuapp.com/webshop/plants?key=" + key;
+            try {
+                const response = await fetch(url); // │{{{{{{{}}}}}}}
+                const data = await response.json();
+                console.log(data);
+            }
+            }
+           {
+        if (selectedPlantId) {}
+            fetchPlantDetails(selectedPlantId);
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+ -->
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Document</title>
+     <style>
+         /* Legg til litt CSS-styling for meldingsdiven */
+         #message {
+             display: none;
+             background-color: #4CAF50;
+             color: white;
+             padding: 10px;
+             position: fixed;
+             bottom: 10px;
+             right: 10px;
+             z-index: 1;
+         }
+ 
+         /* Legg til stil for tilbudsprosent på bildet */
+         .product-image {
+             position: relative;
+         }
+ 
+         .tilbudsprosent {
+             position: absolute;
+             top: 50px;
+             left: 20px;
+             background-color: #b91010;
+             color: white;
+             padding: 5px;
+         }
+     </style>
+ </head>
+ <body>
+     <button id="btn">Tilbake</button>
+     <button id="hjem">Hjem</button>
+     <div id="container"></div>
+     <button id="buybtn">Kjøp denne varen</button>
+     <div id="message">Varen ble lagt til i handlekurven.</div>
+ 
+     <script>
+         let cat = localStorage.getItem("idx");
+         let url = "https://helseflora.herokuapp.com/webshop/plants/?id=" + cat;
+         let container = document.getElementById("container");
+ 
+         let messageDiv = document.getElementById("message");
+ 
+         // Legg til en hendelseslytter for "Kjøp denne varen" -knappen
+         document.getElementById("buybtn").addEventListener("click", function() {
+             // Hent handlekurv fra local storage eller opprett en tom handlekurv
+             let shoppingCart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+ 
+             // Legg til det aktuelle elementet (cat) i handlekurven
+             shoppingCart.push(cat);
+ 
+             // Lagre den oppdaterte handlekurven til local storage
+             localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+ 
+             // Vis meldingen
+             messageDiv.style.display = "block";
+ 
+             setTimeout(function() {
+                 messageDiv.style.opacity = 0;
+             }, 5000); // 5000 ms = 5 sekunder
+         });
+ 
+         btn.addEventListener("click", function(evt){
+             location.href = "side2.html";
+         });
+         hjem.addEventListener("click", function(evt){
+             location.href = "index.html";
+         });
+ 
+         async function loadData(){
+             let respons = await fetch(url);
+             let data = await respons.json();
+             console.log(data);
+ 
+             let h3 = document.createElement("h3");
+             let category = document.createElement("h3");
+             let description = document.createElement("p");
+             let height = document.createElement("p");
+             let growth_zone = document.createElement("p");
+             let fertilizer = document.createElement("p");
+             let advice = document.createElement("p");
+             let img = document.createElement("img");
+             let tilbudsprosent = document.createElement("div");
+             let beholdning = document.createElement("p");
+ 
+             //prosent - tilbud
+             if (data.tilbudsprosent > 0) {
+                 tilbudsprosent.className = "tilbudsprosent";
+                 tilbudsprosent.innerText = "Tilbud " + data.tilbudsprosent + "%";
+                 
+             }
+ 
+             // Bytter png til jpg
+             let tull = data.bildefil;
+             let nestentull = tull.substr(0, 8);
+             let riktig = nestentull + ".jpg";
+ 
+             // Definerer og tegner objekter
+             h3.innerText = data.navn;
+             category.innerText = "Kategori: " + data.kategori;
+             description.innerText = "Beskrivelse: " + data.beskrivelse;
+             height.innerText = "Høyde " + data.hoyde;
+             growth_zone.innerText = "Vekstsone: " + data.vekstsone;
+             fertilizer.innerText = "Nitrogen: " + data.nitrogen + ", kalium: " + data.kalium + ", fosfor: " + data.fosfor;
+             advice.innerText = "Min temp dag: " + data.min_temp_dag + " Min temp natt: " + data.min_temp_natt;
+             beholdning.innerText = data.beholdning + " stk på lager."
+ 
+             // Angi størrelsen på bildet (f.eks., bredde: 300px, høyde: 400px)
+             img.className = "product-image";
+             img.style.width = "300px";
+             img.style.height = "300px";
+             img.style.margin = "5px";
+             img.src = "http://sukkergris.no/plantimages/large/" + riktig;
+ 
+             container.appendChild(img);
+             container.appendChild(h3);
+             container.appendChild(category);
+             container.appendChild(description);
+             container.appendChild(height);
+             container.appendChild(growth_zone);
+             container.appendChild(fertilizer);
+             container.appendChild(advice);
+             container.appendChild(tilbudsprosent);
+             container.appendChild(beholdning);
+         }
+ 
+         loadData();
+     </script>
+ </body>
+ </html>
