@@ -17,9 +17,7 @@
 
     <!-- Checkout form -->
     <h2>Shipping Information</h2>
-    <!-- Include necessary form fields such as name, address, etc. -->
     <form id="checkoutForm">
-        <!-- Add your form fields here -->
         <label for="fullName">Full Name:</label>
         <input type="text" id="fullName" name="fullName" required>
         <p></p>
@@ -36,8 +34,7 @@
         <input type="text" id="streetAddress" name="streetAddress" required>
         <P></P>
         <!-- Add a submit button to complete the checkout -->
-        <button type="submit" onclick="completeCheckout()">Complete Checkout</button>
-
+        <button type="button" onclick="completeCheckout()">Complete Checkout</button>
     </form>
 
     <div id="notification-container"></div>
@@ -91,17 +88,19 @@
                 // Here, you can implement the logic to process the checkout,
                 // send the order to a server, and handle the payment process.
 
+                // Save customer information to local storage
+                const customerInfo = {
+                    fullName: document.getElementById('fullName').value,
+                    country: document.getElementById('country').value,
+                    city: document.getElementById('city').value,
+                    postalCode: document.getElementById('postalCode').value,
+                    streetAddress: document.getElementById('streetAddress').value,
+                };
 
-                // Display notification
-                displayNotification('Checkout completed successfully!');
+                localStorage.setItem('customerInfo', JSON.stringify(customerInfo));
 
-                // Optionally, clear the cart and update the UI
-                cart = [];
-                localStorage.setItem('cart', JSON.stringify(cart));
-                updateCheckoutTotalSum();
-
-                // You can redirect to a confirmation page or any other desired action
-                // window.location.href = 'confirmation.html';
+                // Redirect to the confirm checkout page
+                window.location.href = 'confirmcheckout.html';
             };
 
             // Function to display a notification

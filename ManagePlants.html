@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Helseflora - Kategorier</title>
+ <link rel="stylesheet" href="ManagePlants.css">
+</head>
+
+<body>
+
+    <header>
+        <h2 class="Login">Manage Plants</h2>
+        <nav class="Navigation">
+            <a href="cart.html">View cart</a>
+            <a href="AdminPage.html" id="AdminAccess" class="invisible">Admin page</a>
+            <a href="#" id="out" class="invisible">Sign out</a>
+
+            <div class="dropdown">
+                <button id="Inn" onclick="myFunction()" class="dropbtn">Login</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="Login.html">Admin-Login</a>
+                    <a href="User Login.html">UserLogin</a>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search...">
+                <button onclick="search()">Search</button>
+            </div>
+        </nav>
+    </header>
+
+    <h1>Helseflora - Add Plant</h1>
+
+    <form id="addPlantForm" enctype="multipart/form-data">
+        <label for="name">Plant Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="category_id">Category ID:</label>
+        <input type="text" id="category_id" name="category_id">
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"></textarea>
+
+        <label for="img_file">Image File:</label>
+        <input type="file" id="img_file" name="img_file">
+
+        <label for="price">Price (NOK):</label>
+        <input type="number" id="price" name="price" min="0">
+
+        <label for="discount">Discount (%):</label>
+        <input type="number" id="discount" name="discount" min="0">
+
+        <!-- Add other fields based on your requirements -->
+
+        <button type="button" onclick="submitPlantForm()">Add Plant</button>
+    </form>
+
+    <ul id="categoryList"></ul>
+
+    <script src="Manageplants.js"></script>
+    <script src="add_plants.js"></script>
+    <!-- Include other scripts as needed -->
+
+</body>
+
+</html>

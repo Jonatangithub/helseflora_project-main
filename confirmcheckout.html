@@ -1,0 +1,164 @@
+<!-- confirmcheckout.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Helseflora - Confirm Checkout</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <h1>Helseflora - Confirm Checkout</h1>
+    <a href="index.html">Return to index</a>
+
+    <h2>Selected Items</h2>
+    <ul id="confirmationList"></ul>
+
+    <h2>Shipping Information</h2>
+    <div id="shippingInfo"></div>
+
+    <h2>Payment Options</h2>
+    <form id="paymentForm">
+        <label>
+            <input type="radio" name="paymentOption" value="Vipps" onclick="toggleVipps()">
+            Vipps
+        </label>
+        <div id="vippsInput" style="display: none;">
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber">
+        </div>
+
+        <label>
+            <input type="radio" name="paymentOption" value="Visa" onclick="toggleVisa()">
+            Visa
+        </label>
+        <div id="visaText" style="display: none;">
+            Your Visa has automatically been collected!
+        </div>
+
+        <button type="submit">Complete Purchase</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const confirmationList = document.getElementById('confirmationList');
+            const shippingInfo = document.getElementById('shippingInfo');
+            const paymentForm = document.getElementById('paymentForm');
+            const vippsInput = document.getElementById('vippsInput');
+
+            // Retrieve the cart from local storage
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const customerInfo = JSON.parse(localStorage.getItem('customerInfo')) || {};
+
+            // Display the selected items for confirmation
+            cart.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item.quantity} x ${item.name}`;
+                confirmationList.appendChild(listItem);
+            });
+
+            // Display the shipping information
+            shippingInfo.innerHTML = `
+                <p><strong>Full Name:</strong> ${customerInfo.fullName}</p>
+                <p><strong>Country:</strong> ${customerInfo.country}</p>
+                <p><strong>City:</strong> ${customerInfo.city}</p>
+                <p><strong>Postal Code:</strong> ${customerInfo.postalCode}</p>
+                <p><strong>Street Address:</strong> ${customerInfo.streetAddress}</p>
+            `;
+
+            // Payment form event listener
+            paymentForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Process the payment based on the selected options
+                const selectedOption = document.querySelector('input[name="paymentOption"]:checked');
+
+                // Perform actions based on the selected payment option
+                if (selectedOption) {
+                    const paymentMethod = selectedOption.value;
+
+                    if (paymentMethod === 'Vipps') {
+                        const phoneNumber = document.getElementById('phoneNumber').value;
+                        // Process Vipps payment with the entered phone number
+                        console.log(`Processing Vipps payment with phone number: ${phoneNumber}`);
+                    }
+
+                    if (paymentMethod === 'Visa') {
+                        // Automatically collect Visa payment
+                        console.log('Visa payment has been automatically collected!');
+                    }
+
+                    // Clear the cart
+                    localStorage.removeItem('cart');
+
+                    // Redirect to the confirmation page or any other desired action
+                    // window.location.href = 'order-confirmation.html';
+                }
+            });
+
+            // Function to toggle the display of the Vipps input field
+            window.toggleVipps = function () {
+                vippsInput.style.display = 'block';
+            };
+
+            // Function to toggle the display of the Visa text
+            window.toggleVisa = function () {
+                vippsInput.style.display = 'none';
+            };
+            // Payment form event listener
+paymentForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Process the payment based on the selected options
+    const selectedOption = document.querySelector('input[name="paymentOption"]:checked');
+
+    // Perform actions based on the selected payment option
+    if (selectedOption) {
+        const paymentMethod = selectedOption.value;
+
+        if (paymentMethod === 'Vipps') {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            // Process Vipps payment with the entered phone number
+            console.log(`Processing Vipps payment with phone number: ${phoneNumber}`);
+        }
+
+        if (paymentMethod === 'Visa') {
+            // Automatically collect Visa payment
+            console.log('Visa payment has been automatically collected!');
+        }
+
+        // Calculate total price, tax, and discounted price
+        const totalPris = calculateTotalPrice(cart);
+        const mva = 0.25 * totalPris;
+        const prisumva = 0.75 * totalPris;
+
+        // Clear the cart
+        localStorage.removeItem('cart');
+
+        // Hide the existing content
+        confirmationList.style.display = 'none';
+        shippingInfo.style.display = 'none';
+        paymentForm.style.display = 'none';
+
+        // Create and display the confirmation message
+        const confirmationMessage = document.createElement('div');
+        confirmationMessage.innerHTML = `
+            <h2>Thank you for your purchase!</h2>
+            <p><strong>Pris uten MVA:</strong> ${prisumva.toFixed(2)} kr</p>
+            <p><strong>MVA:</strong> ${mva.toFixed(2)} kr</p>
+            <p><strong>Totalt Betalt:</strong> ${totalPris.toFixed(2)} kr</p>
+            <p>Your order has been confirmed. Thank you for shopping with us!</p>
+        `;
+        document.body.appendChild(confirmationMessage);
+    }
+});
+
+// Function to calculate the total price of items in the cart
+function calculateTotalPrice(cart) {
+    return cart.reduce((total, item) => total + item.quantity * item.price, 0);
+}
+        });
+    </script>
+</body>
+
+</html>
