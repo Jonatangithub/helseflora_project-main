@@ -115,3 +115,12 @@ a:hover {
     overflow-y: auto;
     /* Add vertical scrollbar when needed */
 }
+
+.invisible {
+
+display: none;
+
+
+
+
+}

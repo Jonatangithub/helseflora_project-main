@@ -9,12 +9,12 @@
 
 <body>
 
-
     <header>
-        <h2 class="Login">Helseflora - Kategorier</h2>
+        <h2 class="Login">Admin Page</h2>
         <nav class="Navigation">
             <a href="cart.html">View cart</a>
             <a href="AdminPage.html" id="AdminAccess" class="invisible">Admin page</a>
+            <a href="index.html">Home</a>
             <a href="#" id="out" class="invisible">Sign out</a>
 
             <div class="dropdown">
@@ -22,37 +22,34 @@
                 <div id="myDropdown" class="dropdown-content">
                     <a href="Login.html">Admin-Login</a>
                     <a href="User Login.html">UserLogin</a>
-
                 </div>
             </div>
-
-            
-         
-
-
-
         </nav>
 
-   <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search...">
 
-                <button onclick="search()"> Search </button>
-            </div>
 
+        <!-- Search bar container -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button onclick="search()">Search</button>
+        </div>
 
 
     </header>
 
+    <!-- Buttons for Manage Plants and Orders -->
+    <div class="action-buttons">
+        <h2> <a href="ManagePlants.html">
+                <button onclick= >Manage Plants</button>
+            </a>
+        </h2>
 
-
-
-
-    <ul id="categoryList"></ul>
-
-
-
-    <!-- Search bar container -->
-
+        <h3>
+         <a href="Orders.html">
+            <button onclick="viewOrders()">Orders</button>
+         </a>   
+        </h3>
+    </div>
 
     <script>
         // Search the plants.
@@ -64,6 +61,18 @@
 
             // Navigate to the search page
             window.location.href = searchUrl;
+        }
+
+        function managePlants() {
+            // Handle the logic for managing plants
+            // Redirect to the appropriate page or perform the necessary actions
+            console.log('Manage Plants button clicked');
+        }
+
+        function viewOrders() {
+            // Handle the logic for viewing orders
+            // Redirect to the appropriate page or perform the necessary actions
+            console.log('Orders button clicked');
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -96,7 +105,7 @@
 
         if (localStorage.getItem("adminLogin")) {
             const AdminPage = document.getElementById("AdminAccess");
-            AdminPage.classList.remove("invisible");
+            AdminPage.classList.add("invisible");
             console.log(AdminPage);
 
             const signout = document.getElementById("out");
@@ -113,7 +122,6 @@
 
             const signout = document.getElementById("out");
             signout.classList.add("invisible");
-
 
             const Loginn = document.getElementById("Inn")
             Loginn.classList.remove("invisible");
@@ -141,7 +149,6 @@
                 }
             }
         }
-
     </script>
 </body>
 
