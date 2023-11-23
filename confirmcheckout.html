@@ -1,0 +1,101 @@
+<!-- confirmcheckout.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Helseflora - Confirm Checkout</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <h1>Helseflora - Confirm Checkout</h1>
+    <a href="index.html">Return to index</a>
+
+    <h2>Selected Items</h2>
+    <ul id="confirmationList"></ul>
+
+    <h2>Shipping Information</h2>
+    <div id="shippingInfo"></div>
+
+    <h2>Payment Options</h2>
+    <form id="paymentForm">
+        <label>
+            <input type="radio" name="paymentOption" value="Vipps" onclick="toggleVipps()">
+            Vipps
+        </label>
+        <div id="vippsInput" style="display: none;">
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber">
+        </div>
+
+        <label>
+            <input type="radio" name="paymentOption" value="Visa" onclick="toggleVisa()">
+            Visa
+        </label>
+        <div id="visaText" style="display: none;">
+            Your Visa has automatically been collected!
+        </div>
+
+        <button type="submit">Complete Purchase</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const confirmationList = document.getElementById('confirmationList');
+            const shippingInfo = document.getElementById('shippingInfo');
+            const paymentForm = document.getElementById('paymentForm');
+            const vippsInput = document.getElementById('vippsInput');
+
+            // Retrieve the cart from local storage
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const customerInfo = JSON.parse(localStorage.getItem('customerInfo')) || {};
+
+            // Display the selected items for confirmation
+            const fetchPromises = cart.map(item => {
+                return fetch(`https://helseflora.herokuapp.com/webshop/plants/?id=${item.id}&key=BQPHVM69`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const plant = data[0];
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${item.quantity} x ${plant.name}`;
+                        confirmationList.appendChild(listItem);
+
+                        return item.quantity * plant.price; // Return the total price for later calculation
+                    })
+                    .catch(error => {
+                        console.error('Error fetching plant details:', error);
+                        return 0; // Return 0 if there's an error
+                    });
+            });
+
+            // Wait for all fetch requests to complete
+            Promise.all(fetchPromises)
+                .then(totalPrices => {
+                    // Display the total prices in the console (for debugging)
+                    console.log('Total Prices:', totalPrices);
+
+                    // Calculate the total price
+                    const totalPris = totalPrices.reduce((sum, price) => sum + price, 0);
+
+                    // Display the total price in the console (for debugging)
+                    console.log('Total Pris:', totalPris);
+
+                    // Display the shipping information
+                    shippingInfo.innerHTML = `
+                        <p><strong>Full Name:</strong> ${customerInfo.fullName}</p>
+                        <p><strong>Country:</strong> ${customerInfo.country}</p>
+                        <p><strong>City:</strong> ${customerInfo.city}</p>
+                        <p><strong>Postal Code:</strong> ${customerInfo.postalCode}</p>
+                        <p><strong>Street Address:</strong> ${customerInfo.streetAddress}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error calculating total sum:', error);
+                });
+
+            // Rest of the code...
+        });
+    </script>
+</body>
+
+</html>

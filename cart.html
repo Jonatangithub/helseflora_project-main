@@ -4,7 +4,19 @@
 <head>
     <title>Helseflora - Cart</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-
+    <style>
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+        }
+    </style>
 </head>
 
 <body>
@@ -54,36 +66,105 @@
 
             // Update quantity and total price in the cart array and local storage
             window.updateQuantity = function (itemId, newQuantity) {
-                // ... (your existing code)
+                const totalElement = document.getElementById(`total_${itemId}`);
+
+                // Find the item in the cart array
+                const cartItem = cart.find(item => item.id === itemId);
+
+                // Update the quantity and total price in the cart array
+                if (cartItem) {
+                    cartItem.quantity = parseInt(newQuantity, 10);
+                    if (isNaN(cartItem.quantity) || cartItem.quantity < 1) {
+                        cartItem.quantity = 1; // Default to 1 if not a valid positive integer
+                    }
+
+                    // Fetch plant details based on the item id
+                    fetch(`https://helseflora.herokuapp.com/webshop/plants/?id=${itemId}&key=BQPHVM69`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const plant = data[0];
+                            if (plant) {
+                                cartItem.price = plant.price; // Update the price from the fetched data
+                                totalElement.textContent = (cartItem.quantity * plant.price).toFixed(2);
+                                updateTotalSum(); // Update the total sum
+                            } else {
+                                console.error('Plant details not found for item id:', itemId);
+                            }
+
+                            // Update the cart in local storage
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                        })
+                        .catch(error => {
+                            console.error('Error fetching plant details:', error);
+                        });
+                }
             };
 
             // Remove item from the cart array and local storage
             window.removeItem = function (itemId) {
-                // ... (your existing code)
+                // Find the index of the item in the cart array
+                const itemIndex = cart.findIndex(item => item.id === itemId);
+
+                // Remove the item from the cart array
+                if (itemIndex !== -1) {
+                    cart.splice(itemIndex, 1);
+
+                    // Update the cart in local storage
+                    localStorage.setItem('cart', JSON.stringify(cart));
+
+                    // Remove the item's HTML element from the cart list
+                    const listItem = document.getElementById(`quantity_${itemId}`).parentNode.parentNode;
+                    listItem.remove();
+
+                    updateTotalSum(); // Update the total sum
+
+                    // Display notification
+                    displayNotification('Item removed from the cart!');
+                }
             };
 
             // Remove all items from the cart array and local storage
             window.removeAllItems = function () {
-                // ... (your existing code)
+                // Clear the cart array
+                cart = [];
+
+                // Update the cart in local storage
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                // Remove all items from the cart list
+                while (cartList.firstChild) {
+                    cartList.firstChild.remove();
+                }
+
+                updateTotalSum(); // Update the total sum
+
+                // Display notification
+                displayNotification('All items removed from the cart!');
             };
 
             // Function to update the total sum
             function updateTotalSum() {
-                // ... (your existing code)
+                const totalSum = cart.reduce((sum, item) => {
+                    return sum + item.quantity * item.price;
+                }, 0).toFixed(2);
+                totalSumElement.textContent = totalSum;
             }
 
             // Function to display a notification
             function displayNotification(message) {
-                // ... (your existing code)
-            }
+                // Create a notification element
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
 
-            // Checkout button
-            const checkoutButton = document.createElement('button');
-            checkoutButton.textContent = 'Proceed to Checkout';
-            checkoutButton.onclick = function () {
-                window.location.href = 'checkout.html'; // Redirect to the checkout page
-            };
-            document.body.appendChild(checkoutButton);
+                // Append the notification to the container
+                notificationContainer.appendChild(notification);
+
+                // Remove the notification after a certain duration (e.g., 3 seconds)
+                setTimeout(() => {
+                    notificationContainer.removeChild(notification);
+                }, 3000);
+            }
         });
     </script>
 
