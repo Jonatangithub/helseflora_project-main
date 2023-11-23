@@ -1,22 +1,11 @@
+<!-- cart.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <title>Helseflora - Cart</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <style>
-        .notification {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 9999;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -37,9 +26,8 @@
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
             // Display the items in the cart
-            cart.forEach(item => {
-                // Fetch plant details based on the item id
-                fetch(`https://helseflora.herokuapp.com/webshop/plants/?id=${item.id}&key=BQPHVM69`)
+            const fetchPromises = cart.map(item => {
+                return fetch(`https://helseflora.herokuapp.com/webshop/plants/?id=${item.id}&key=BQPHVM69`)
                     .then(response => response.json())
                     .then(data => {
                         const plant = data[0];
@@ -58,11 +46,24 @@
                             </div>
                         `;
                         cartList.appendChild(listItem);
+
+                        return item.quantity * plant.price;
                     })
                     .catch(error => {
                         console.error('Error fetching plant details:', error);
+                        return 0; // Return 0 if there's an error
                     });
             });
+
+            // Wait for all fetch requests to complete
+            Promise.all(fetchPromises)
+                .then(totalPrices => {
+                    const totalSum = totalPrices.reduce((sum, price) => sum + price, 0).toFixed(2);
+                    totalSumElement.textContent = totalSum;
+                })
+                .catch(error => {
+                    console.error('Error calculating total sum:', error);
+                });
 
             // Update quantity and total price in the cart array and local storage
             window.updateQuantity = function (itemId, newQuantity) {
@@ -116,7 +117,7 @@
                     const listItem = document.getElementById(`quantity_${itemId}`).parentNode.parentNode;
                     listItem.remove();
 
-                    updateTotalSum(); // Update the total sum
+                    updateTotalSum(); // Update the total sum after removing the item
 
                     // Display notification
                     displayNotification('Item removed from the cart!');
@@ -136,7 +137,7 @@
                     cartList.firstChild.remove();
                 }
 
-                updateTotalSum(); // Update the total sum
+                updateTotalSum(); // Update the total sum after removing all items
 
                 // Display notification
                 displayNotification('All items removed from the cart!');
@@ -165,6 +166,14 @@
                     notificationContainer.removeChild(notification);
                 }, 3000);
             }
+
+            // Checkout button
+            const checkoutButton = document.createElement('button');
+            checkoutButton.textContent = 'Proceed to Checkout';
+            checkoutButton.onclick = function () {
+                window.location.href = 'checkout.html'; // Redirect to the checkout page
+            };
+            document.body.appendChild(checkoutButton);
         });
     </script>
 

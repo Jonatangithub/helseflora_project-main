@@ -51,49 +51,112 @@
             const customerInfo = JSON.parse(localStorage.getItem('customerInfo')) || {};
 
             // Display the selected items for confirmation
-            const fetchPromises = cart.map(item => {
-                return fetch(`https://helseflora.herokuapp.com/webshop/plants/?id=${item.id}&key=BQPHVM69`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const plant = data[0];
-                        const listItem = document.createElement('li');
-                        listItem.textContent = `${item.quantity} x ${plant.name}`;
-                        confirmationList.appendChild(listItem);
-
-                        return item.quantity * plant.price; // Return the total price for later calculation
-                    })
-                    .catch(error => {
-                        console.error('Error fetching plant details:', error);
-                        return 0; // Return 0 if there's an error
-                    });
+            cart.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item.quantity} x ${item.name}`;
+                confirmationList.appendChild(listItem);
             });
 
-            // Wait for all fetch requests to complete
-            Promise.all(fetchPromises)
-                .then(totalPrices => {
-                    // Display the total prices in the console (for debugging)
-                    console.log('Total Prices:', totalPrices);
+            // Display the shipping information
+            shippingInfo.innerHTML = `
+                <p><strong>Full Name:</strong> ${customerInfo.fullName}</p>
+                <p><strong>Country:</strong> ${customerInfo.country}</p>
+                <p><strong>City:</strong> ${customerInfo.city}</p>
+                <p><strong>Postal Code:</strong> ${customerInfo.postalCode}</p>
+                <p><strong>Street Address:</strong> ${customerInfo.streetAddress}</p>
+            `;
 
-                    // Calculate the total price
-                    const totalPris = totalPrices.reduce((sum, price) => sum + price, 0);
+            // Payment form event listener
+            paymentForm.addEventListener('submit', function (event) {
+                event.preventDefault();
 
-                    // Display the total price in the console (for debugging)
-                    console.log('Total Pris:', totalPris);
+                // Process the payment based on the selected options
+                const selectedOption = document.querySelector('input[name="paymentOption"]:checked');
 
-                    // Display the shipping information
-                    shippingInfo.innerHTML = `
-                        <p><strong>Full Name:</strong> ${customerInfo.fullName}</p>
-                        <p><strong>Country:</strong> ${customerInfo.country}</p>
-                        <p><strong>City:</strong> ${customerInfo.city}</p>
-                        <p><strong>Postal Code:</strong> ${customerInfo.postalCode}</p>
-                        <p><strong>Street Address:</strong> ${customerInfo.streetAddress}</p>
-                    `;
-                })
-                .catch(error => {
-                    console.error('Error calculating total sum:', error);
-                });
+                // Perform actions based on the selected payment option
+                if (selectedOption) {
+                    const paymentMethod = selectedOption.value;
 
-            // Rest of the code...
+                    if (paymentMethod === 'Vipps') {
+                        const phoneNumber = document.getElementById('phoneNumber').value;
+                        // Process Vipps payment with the entered phone number
+                        console.log(`Processing Vipps payment with phone number: ${phoneNumber}`);
+                    }
+
+                    if (paymentMethod === 'Visa') {
+                        // Automatically collect Visa payment
+                        console.log('Visa payment has been automatically collected!');
+                    }
+
+                    // Clear the cart
+                    localStorage.removeItem('cart');
+
+                    // Redirect to the confirmation page or any other desired action
+                    // window.location.href = 'order-confirmation.html';
+                }
+            });
+
+            // Function to toggle the display of the Vipps input field
+            window.toggleVipps = function () {
+                vippsInput.style.display = 'block';
+            };
+
+            // Function to toggle the display of the Visa text
+            window.toggleVisa = function () {
+                vippsInput.style.display = 'none';
+            };
+            // Payment form event listener
+paymentForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Process the payment based on the selected options
+    const selectedOption = document.querySelector('input[name="paymentOption"]:checked');
+
+    // Perform actions based on the selected payment option
+    if (selectedOption) {
+        const paymentMethod = selectedOption.value;
+
+        if (paymentMethod === 'Vipps') {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            // Process Vipps payment with the entered phone number
+            console.log(`Processing Vipps payment with phone number: ${phoneNumber}`);
+        }
+
+        if (paymentMethod === 'Visa') {
+            // Automatically collect Visa payment
+            console.log('Visa payment has been automatically collected!');
+        }
+
+        // Calculate total price, tax, and discounted price
+        const totalPris = calculateTotalPrice(cart);
+        const mva = 0.25 * totalPris;
+        const prisumva = 0.75 * totalPris;
+
+        // Clear the cart
+        localStorage.removeItem('cart');
+
+        // Hide the existing content
+        confirmationList.style.display = 'none';
+        shippingInfo.style.display = 'none';
+        paymentForm.style.display = 'none';
+
+        // Create and display the confirmation message
+        const confirmationMessage = document.createElement('div');
+        confirmationMessage.innerHTML = `
+            <h2>Thank you for your purchase!</h2>
+            <p><strong>Pris uten MVA:</strong> ${prisumva.toFixed(2)} kr</p>
+            <p><strong>MVA:</strong> ${mva.toFixed(2)} kr</p>
+            <p><strong>Totalt Betalt:</strong> ${totalPris.toFixed(2)} kr</p>
+            <p>Your order has been confirmed. Thank you for shopping with us!</p>
+        `;
+        document.body.appendChild(confirmationMessage);
+    }
+});
+
+// Function to calculate the total price of items in the cart
+function calculateTotalPrice(cart) {
+    return cart.reduce((total, item) => total + item.quantity * item.price, 0);
+}
         });
     </script>
 </body>
